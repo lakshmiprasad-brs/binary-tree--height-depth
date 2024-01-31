@@ -1,30 +1,60 @@
-class TreeNode {
-    constructor(val) {
-        this.val = val;
-        this.left = this.right = null;
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('calculateHeightBtn');
+    const resultParagraph = document.getElementById('result');
+
+    button.addEventListener('click', function() {
+        const treeInput = document.getElementById('treeInput').value;
+        const root = constructBinaryTree(treeInput);
+        const height = treeHeight(root);
+        resultParagraph.textContent = "Height of the binary tree: " + height;
+    });
+
+    function TreeNode(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
     }
-}
 
-// Function to calculate the height of a binary tree
-const getHeight = function(root) {
-    if (!root) return -1; // Base case
-    return 1 + Math.max(getHeight(root.left), getHeight(root.right));
-};
+    function treeHeight(root) {
+        if (root === null) {
+            return 0;
+        } else {
+            const leftHeight = treeHeight(root.left);
+            const rightHeight = treeHeight(root.right);
+            return Math.max(leftHeight, rightHeight) + 1;
+        }
+    }
 
-// Function to calculate the depth of a binary tree
-const getDepth = function(root) {
-    if (!root) return 0; // Base case
-    return 1 + Math.max(getDepth(root.left), getDepth(root.right));
-};
+    function constructBinaryTree(input) {
+        const values = input.split(',').map(value => parseInt(value.trim()));
+        return constructTreeFromArray(values);
+    }
 
-// Example usage:
-// Create a binary tree
-const tree = new TreeNode(1);
-tree.left = new TreeNode(2);
-tree.right = new TreeNode(3);
-tree.left.left = new TreeNode(4);
-tree.left.right = new TreeNode(5);
-tree.right.left= new  TreeNode(6);
+    function constructTreeFromArray(values) {
+        if (values.length === 0) {
+            return null;
+        }
 
-console.log("Height of the binary tree:", getHeight(tree));
-console.log("Depth of the binary tree:", getDepth(tree));   
+        const root = new TreeNode(values[0]);
+        const queue = [root];
+        let i = 1;
+
+        while (i < values.length) {
+            const currentNode = queue.shift();
+
+            const leftValue = values[i++];
+            if (leftValue !== null && leftValue !== undefined) {
+                currentNode.left = new TreeNode(leftValue);
+                queue.push(currentNode.left);
+            }
+
+            const rightValue = values[i++];
+            if (rightValue !== null && rightValue !== undefined) {
+                currentNode.right = new TreeNode(rightValue);
+                queue.push(currentNode.right);
+            }
+        }
+
+        return root;
+    }
+});
